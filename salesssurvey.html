@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบสอบถามทีมเซลล์ - ทำความเข้าใจลูกค้า</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 2px,
+                rgba(255,255,255,0.05) 2px,
+                rgba(255,255,255,0.05) 4px
+            );
+            animation: slide 20s linear infinite;
+        }
+
+        @keyframes slide {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-content {
+            padding: 40px;
+        }
+
+        .personal-info {
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid #2196F3;
+        }
+
+        .info-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .info-field {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .info-field label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .info-field input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .info-field input:focus {
+            outline: none;
+            border-color: #2196F3;
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+        }
+
+        .section {
+            margin-bottom: 40px;
+            background: white;
+            border-radius: 15px;
+            border: 1px solid #e1e5e9;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .section:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 20px 30px;
+            font-size: 1.4em;
+            font-weight: 600;
+        }
+
+        .section-header.reject {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+        }
+
+        .section-header.questions {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+        }
+
+        .section-content {
+            padding: 30px;
+        }
+
+        .category {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 10px;
+            border-left: 4px solid #2196F3;
+        }
+
+        .category h4 {
+            color: #333;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .category h4::before {
+            content: attr(data-icon);
+            font-size: 1.5em;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid #e1e5e9;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .checkbox-item:hover {
+            border-color: #2196F3;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 10px rgba(33, 150, 243, 0.1);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #2196F3;
+            cursor: pointer;
+        }
+
+        .checkbox-item label {
+            flex: 1;
+            cursor: pointer;
+            line-height: 1.4;
+            color: #333;
+        }
+
+        .other-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .other-input:focus {
+            outline: none;
+            border-color: #2196F3;
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+        }
+
+        .question-item {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 10px;
+            border-left: 4px solid #FF9800;
+        }
+
+        .question-item h4 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .text-input, .textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .text-input:focus, .textarea:focus {
+            outline: none;
+            border-color: #2196F3;
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+        }
+
+        .numbered-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .numbered-input {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .number-badge {
+            background: #2196F3;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .submit-section {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            padding: 30px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .submit-btn {
+            background: white;
+            color: #4CAF50;
+            padding: 18px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .thank-you {
+            color: white;
+            margin-top: 20px;
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .form-content {
+                padding: 20px;
+            }
+            
+            .info-row {
+                flex-direction: column;
+            }
+            
+            .checkbox-group {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 แบบสอบถามทีมเซลล์</h1>
+            <p>ทำความเข้าใจพฤติกรรมลูกค้า เพื่อพัฒนายอดขาย</p>
+        </div>
+
+        <div class="form-content">
+            <form id="salesForm">
+                <!-- ข้อมูลส่วนตัว -->
+                <div class="personal-info">
+                    <div class="info-row">
+                        <div class="info-field">
+                            <label for="fullName">ชื่อ-นามสกุล</label>
+                            <input type="text" id="fullName" name="fullName" required>
+                        </div>
+                        <div class="info-field">
+                            <label for="position">ตำแหน่ง</label>
+                            <input type="text" id="position" name="position" required>
+                        </div>
+                        <div class="info-field">
+                            <label for="date">วันที่</label>
+                            <input type="date" id="date" name="date" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- จุดที่ลูกค้าตัดสินใจซื้อ -->
+                <div class="section">
+                    <div class="section-header">
+                        ✅ จุดที่ลูกค้าตัดสินใจซื้อ
+                    </div>
+                    <div class="section-content">
+                        <p style="margin-bottom: 25px; color: #666; font-style: italic;">
+                            เซลล์รู้สึกว่าลูกค้าส่วนใหญ่ตัดสินใจซื้อเพราะอะไร? (เลือกได้หลายข้อ)
+                        </p>
+
+                        <div class="category">
+                            <h4 data-icon="💰">ด้านราคา</h4>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="price_cheaper" name="buy_reasons" value="ราคาถูกกว่าคู่แข่ง">
+                                    <label for="price_cheaper">ราคาถูกกว่าคู่แข่ง</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="promotion" name="buy_reasons" value="มีโปรโมชั่น/ส่วนลด">
+                                    <label for="promotion">มีโปรโมชั่น/ส่วนลด</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="value_for_money" name="buy_reasons" value="คุ้มค่า เทียบกับคุณภาพ">
+                                    <label for="value_for_money">คุ้มค่า เทียบกับคุณภาพ</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="installment" name="buy_reasons" value="มีระบบผ่อนชำระ">
+                                    <label for="installment">มีระบบผ่อนชำระ</label>
+                                </div>
+                            </div>
+                            <input type="text" class="other-input" name="price_other" placeholder="อื่นๆ (ระบุ)...">
+                        </div>
+
+                        <div class="category">
+                            <h4 data-icon="🏆">ด้านคุณภาพ</h4>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="better_quality" name="buy_reasons" value="คุณภาพดีกว่าคู่แข่ง">
+                                    <label for="better_quality">คุณภาพดีกว่าคู่แข่ง</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="authentic" name="buy_reasons" value="เป็นของแท้/ของแบรนด์ดัง">
+                                    <label for="authentic">เป็นของแท้/ของแบรนด์ดัง</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="durable" name="buy_reasons" value="ทนทาน ใช้งานได้นาน">
+                                    <label for="durable">ทนทาน ใช้งานได้นาน</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="warranty" name="buy_reasons" value="มีการรับประกัน">
+                                    <label for="warranty">มีการรับประกัน</label>
+                                </div>
+                            </div>
+                            <input type="text" class="other-input" name="quality_other" placeholder="อื่นๆ (ระบุ)...">
+                        </div>
+
+                        <div class="category">
+                            <h4 data-icon="🚚">ด้านการบริการ</h4>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="fast_delivery" name="buy_reasons" value="จัดส่งเร็ว">
+                                    <label for="fast_delivery">จัดส่งเร็ว</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="in_stock" name="buy_reasons" value="มีสินค้าในสต็อก">
+                                    <label for="in_stock">มีสินค้าในสต็อก</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="good_advice" name="buy_reasons" value="เซลล์ให้คำแนะนำดี">
+                                    <label for="good_advice">เซลล์ให้คำแนะนำดี</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="after_sale" name="buy_reasons" value="บริการหลังการขายดี">
+                                    <label for="after_sale">บริการหลังการขายดี</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="free_install" name="buy_reasons" value="ติดตั้งให้ฟรี">
+                                    <label for="free_install">ติดตั้งให้ฟรี</label>
+                                </div>
+                            </div>
+                            <input type="text" class="other-input" name="service_other" placeholder="อื่นๆ (ระบุ)...">
+                        </div>
+
+                        <div class="category">
+                            <h4 data-icon="🤝">ด้านความสัมพันธ์</h4>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="trust" name="buy_reasons" value="เชื่อใจเซลล์/บริษัท">
+                                    <label for="trust">เชื่อใจเซลล์/บริษัท</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="regular_customer" name="buy_reasons" value="เป็นลูกค้าประจำ">
+                                    <label for="regular_customer">เป็นลูกค้าประจำ</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="referral" name="buy_reasons" value="มีคนแนะนำมา">
+                                    <label for="referral">มีคนแนะนำมา</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="reputation" name="buy_reasons" value="ชื่อเสียงของบริษัทดี">
+                                    <label for="reputation">ชื่อเสียงของบริษัทดี</label>
+                                </div>
+                            </div>
+                            <input type="text" class="other-input" name="relationship_other" placeholder="อื่นๆ (ระบุ)...">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- จุดที่ลูกค้าปฏิเสธ -->
+                <div class="section">
+                    <div class="section-header reject">
+                        ❌ จุดที่ลูกค้าปฏิเสธ/ไม่ซื้อ
+                    </div>
+                    <div class="section-content">
+                        <p style="margin-bottom: 25px; color: #666; font-style: italic;">
+                            เซลล์พบว่าลูกค้าปฏิเสธเพราะอะไรบ้าง? (เลือกได้หลายข้อ)
+                        </p>
+
+                        <div class="category">
+                            <h4 data-icon="💸">ปัญหาด้านราคา</h4>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="too_expensive" name="reject_reasons" value="แพงกว่าคู่แข่ง">
+                                    <label for="too_expensive">แพงกว่าคู่แข่ง</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="no_discount" name="reject_reasons" value="ไม่มีส่วนลด/โปรโมชั่น">
+                                    <label for="no_discount">ไม่มีส่วนลด/โปรโมชั่น</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="insufficient_budget" name="reject_reasons" value="งบไม่พอ">
+                                    <label for="insufficient_budget">งบไม่พอ</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="not_worth" name="reject_reasons" value="ไม่คุ้มค่า">
+                                    <label for="not_worth">ไม่คุ้มค่า</label>
+                                </div>
+                            </div>
+                            <input type="text" class="other-input" name="reject_price_other" placeholder="อื่นๆ (ระบุ)...">
+                        </div>
+
+                        <div class="category">
+                            <h4 data-icon="📦">ปัญหาด้านสินค้า</h4>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="out_of_stock" name="reject_reasons" value="ไม่มีสินค้าในสต็อก">
+                                    <label for="out_of_stock">ไม่มีสินค้าในสต็อก</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="long_wait" name="reject_reasons" value="รอของนาน">
+                                    <label for="long_wait">รอของนาน</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="wrong_product" name="reject_reasons" value="สินค้าไม่ตรงความต้องการ">
+                                    <label for="wrong_product">สินค้าไม่ตรงความต้องการ</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="quality_doubt" name="reject_reasons" value="ไม่เชื่อใจคุณภาพ">
+                                    <label for="quality_doubt">ไม่เชื่อใจคุณภาพ</label>
+                                </div>
+                            </div>
+                            <input type="text" class="other-input" name="reject_product_other" placeholder="อื่นๆ (ระบุ)...">
+                        </div>
+
+                        <div class="category">
+                            <h4 data-icon="🤔">ปัญหาด้านการตัดสินใจ</h4>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="compare_first" name="reject_reasons" value="ยังไม่แน่ใจ ต้องไปดูที่อื่นก่อน">
+                                    <label for="compare_first">ยังไม่แน่ใจ ต้องไปดูที่อื่นก่อน</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="need_approval" name="reject_reasons" value="ต้องปรึกษาเจ้านาย/คนอื่น">
+                                    <label for="need_approval">ต้องปรึกษาเจ้านาย/คนอื่น</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="wrong_timing" name="reject_reasons" value="รอโอกาสที่เหมาะสม">
+                                    <label for="wrong_timing">รอโอกาสที่เหมาะสม</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="afraid_risk" name="reject_reasons" value="กลัวเสี่ยง/เปลี่ยนแปลง">
+                                    <label for="afraid_risk">กลัวเสี่ยง/เปลี่ยนแปลง</label>
+                                </div>
+                            </div>
+                            <input type="text" class="other-input" name="reject_decision_other" placeholder="อื่นๆ (ระบุ)...">
+                        </div>
+
+                        <div class="category">
+                            <h4 data-icon="🏪">ปัญหาด้านบริการ</h4>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="unclear_info" name="reject_reasons" value="เซลล์ให้ข้อมูลไม่ชัดเจน">
+                                    <label for="unclear_info">เซลล์ให้ข้อมูลไม่ชัดเจน</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="poor_service" name="reject_reasons" value="บริการไม่ดี">
+                                    <label for="poor_service">บริการไม่ดี</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="hard_contact" name="reject_reasons" value="ติดต่อยาก/ช้า">
+                                    <label for="hard_contact">ติดต่อยาก/ช้า</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="no_trust_company" name="reject_reasons" value="ไม่เชื่อใจบริษัท">
+                                    <label for="no_trust_company">ไม่เชื่อใจบริษัท</label>
+                                </div>
+                            </div>
+                            <input type="text" class="other-input" name="reject_service_other" placeholder="อื่นๆ (ระบุ)...">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- คำถามเพิ่มเติม -->
+                <div class="section">
+                    <div class="section-header questions">
+                        💭 คำถามเพิ่มเติม
+                    </div>
+                    <div class="section-content">
+                        <div class="question-item">
+                            <h4>1. คำถามที่ลูกค้าถามบ่อยที่สุด 3 อันดับแรก:</h4>
+                            <div class="numbered-inputs">
+                                <div class="numbered-input">
+                                    <div class="number-badge">1</div>
+                                    <input type="text" class="text-input" name="frequent_question_1">
+                                </div>
+                                <div class="numbered-input">
+                                    <div class="number-badge">2</div>
+                                    <input type="text" class="text-input" name="frequent_question_2">
+                                </div>
+                                <div class="numbered-input">
+                                    <div class="number-badge">3</div>
+                                    <input type="text" class="text-input" name="frequent_question_3">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="question-item">
+                            <h4>2. สิ่งที่ลูกค้าเปรียบเทียบกับคู่แข่งมากที่สุด:</h4>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="compare_price" name="comparison" value="ราคา">
+                                    <label for="compare_price">ราคา</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="compare_quality" name="comparison" value="คุณภาพ">
+                                    <label for="compare_quality">คุณภาพ</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="compare_warranty" name="comparison" value="การรับประกัน">
+                                    <label for="compare_warranty">การรับประกัน</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="compare_speed" name="comparison" value="ความเร็วในการส่ง">
+                                    <label for="compare_speed">ความเร็วในการส่ง</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="compare_after_sale" name="comparison" value="บริการหลังการขาย">
+                                    <label for="compare_after_sale">บริการหลังการขาย</label>
+                                </div>
+                            </div>
+                            <input type="text" class="other-input" name="comparison_other" placeholder="อื่นๆ (ระบุ)...">
+                        </div>
+
+                        <div class="question-item">
+                            <h4>3. ช่วงเวลาที่ลูกค้าตัดสินใจเร็วที่สุด:</h4>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="radio" id="decide_immediate" name="decision_time" value="ทันที (ตอนคุยครั้งแรก)">
+                                    <label for="decide_immediate">ทันที (ตอนคุยครั้งแรก)</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="radio" id="decide_1_3_days" name="decision_time" value="ภายใน 1-3 วัน">
+                                    <label for="decide_1_3_days">ภายใน 1-3 วัน</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="radio" id="decide_1_week" name="decision_time" value="ภายใน 1 สัปดาห์">
+                                    <label for="decide_1_week">ภายใน 1 สัปดาห์</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="radio" id="decide_over_week" name="decision_time" value="เกิน 1 สัปดาห์">
+                                    <label for="decide_over_week">เกิน 1 สัปดาห์</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="radio" id="decide_uncertain" name="decision_time" value="ไม่แน่นอน">
+                                    <label for="decide_uncertain">ไม่แน่นอน</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="question-item">
+                            <h4>4. ลูกค้ามักลังเล/ไม่ตัดสินใจในช่วงไหนของการสนทนา:</h4>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="hesitate_start" name="hesitation_points" value="ตอนเริ่มต้น - ยังไม่เข้าใจความต้องการ">
+                                    <label for="hesitate_start">ตอนเริ่มต้น - ยังไม่เข้าใจความต้องการ</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="hesitate_product" name="hesitation_points" value="ตอนแนะนำสินค้า - ไม่แน่ใจว่าเหมาะสมกับตัวเอง">
+                                    <label for="hesitate_product">ตอนแนะนำสินค้า - ไม่แน่ใจว่าเหมาะสมกับตัวเอง</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="hesitate_price" name="hesitation_points" value="ตอนบอกราคา - รู้สึกแพง/ไม่คุ้มค่า">
+                                    <label for="hesitate_price">ตอนบอกราคา - รู้สึกแพง/ไม่คุ้มค่า</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="hesitate_compare" name="hesitation_points" value="ตอนเปรียบเทียบ - อยากไปดูของคู่แข่งก่อน">
+                                    <label for="hesitate_compare">ตอนเปรียบเทียบ - อยากไปดูของคู่แข่งก่อน</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="hesitate_closing" name="hesitation_points" value="ตอนจะปิดการขาย - กลัวตัดสินใจผิด">
+                                    <label for="hesitate_closing">ตอนจะปิดการขาย - กลัวตัดสินใจผิด</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="hesitate_approval" name="hesitation_points" value="หลังเสนอข้อตกลง - ต้องไปขออนุมัติ/ปรึกษาคนอื่น">
+                                    <label for="hesitate_approval">หลังเสนอข้อตกลง - ต้องไปขออนุมัติ/ปรึกษาคนอื่น</label>
+                                </div>
+                            </div>
+                            <input type="text" class="other-input" name="hesitation_other" placeholder="อื่นๆ (ระบุ)...">
+                        </div>
+
+                        <div class="question-item">
+                            <h4>5. ประเภทลูกค้าที่ง่ายที่สุดในการขาย:</h4>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="easy_regular" name="easy_customers" value="ลูกค้าประจำ">
+                                    <label for="easy_regular">ลูกค้าประจำ</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="easy_referral" name="easy_customers" value="ลูกค้าที่มีคนแนะนำ">
+                                    <label for="easy_referral">ลูกค้าที่มีคนแนะนำ</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="easy_urgent" name="easy_customers" value="ลูกค้าที่รีบ/เร่งด่วน">
+                                    <label for="easy_urgent">ลูกค้าที่รีบ/เร่งด่วน</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="easy_budget" name="easy_customers" value="ลูกค้าที่มีงบเพียงพอ">
+                                    <label for="easy_budget">ลูกค้าที่มีงบเพียงพอ</label>
+                                </div>
+                            </div>
+                            <input type="text" class="other-input" name="easy_customers_other" placeholder="อื่นๆ (ระบุ)...">
+                        </div>
+
+                        <div class="question-item">
+                            <h4>6. ข้อเสนอแนะเพื่อเพิ่มยอดขาย:</h4>
+                            <textarea class="textarea" name="suggestions" placeholder="กรุณาแสดงความคิดเห็นและข้อเสนอแนะ..."></textarea>
+                        </div>
+
+                        <div class="question-item">
+                            <h4>7. ข้อสังเกตเพิ่มเติม:</h4>
+                            <textarea class="textarea" name="additional_notes" placeholder="สิ่งที่เซลล์สังเกตเห็นจากพฤติกรรมลูกค้า..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="submit-section">
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        📊 ส่งข้อมูล
+                    </button>
+                    <div class="thank-you">
+                        🙏 ขอบคุณสำหรับข้อมูลที่มีค่า!
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // กำหนดวันที่ปัจจุบัน
+        document.getElementById('date').valueAsDate = new Date();
+
+        // ฟังก์ชันส่งข้อมูลไป Google Sheets
+        document.getElementById('salesForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            
+            // เปลี่ยนสถานะปุ่ม
+            submitBtn.innerHTML = '⏳ กำลังส่งข้อมูล...';
+            submitBtn.disabled = true;
+            
+            // เก็บข้อมูลจากฟอร์ม
+            const formData = new FormData(this);
+            
+            // แปลงข้อมูล checkbox เป็น array
+            const buyReasons = [];
+            const rejectReasons = [];
+            const comparisons = [];
+            const hesitationPoints = [];
+            const easyCustomers = [];
+            
+            formData.getAll('buy_reasons').forEach(reason => buyReasons.push(reason));
+            formData.getAll('reject_reasons').forEach(reason => rejectReasons.push(reason));
+            formData.getAll('comparison').forEach(item => comparisons.push(item));
+            formData.getAll('hesitation_points').forEach(point => hesitationPoints.push(point));
+            formData.getAll('easy_customers').forEach(customer => easyCustomers.push(customer));
+            
+            // สร้าง object ข้อมูลที่จะส่ง
+            const data = {
+                timestamp: new Date().toLocaleString('th-TH'),
+                fullName: formData.get('fullName'),
+                position: formData.get('position'),
+                date: formData.get('date'),
+                
+                // จุดที่ลูกค้าตัดสินใจซื้อ
+                buyReasons: buyReasons.join(', '),
+                priceOther: formData.get('price_other'),
+                qualityOther: formData.get('quality_other'),
+                serviceOther: formData.get('service_other'),
+                relationshipOther: formData.get('relationship_other'),
+                
+                // จุดที่ลูกค้าปฏิเสธ
+                rejectReasons: rejectReasons.join(', '),
+                rejectPriceOther: formData.get('reject_price_other'),
+                rejectProductOther: formData.get('reject_product_other'),
+                rejectDecisionOther: formData.get('reject_decision_other'),
+                rejectServiceOther: formData.get('reject_service_other'),
+                
+                // คำถามเพิ่มเติม
+                frequentQuestion1: formData.get('frequent_question_1'),
+                frequentQuestion2: formData.get('frequent_question_2'),
+                frequentQuestion3: formData.get('frequent_question_3'),
+                comparisons: comparisons.join(', '),
+                comparisonOther: formData.get('comparison_other'),
+                decisionTime: formData.get('decision_time'),
+                hesitationPoints: hesitationPoints.join(', '),
+                hesitationOther: formData.get('hesitation_other'),
+                easyCustomers: easyCustomers.join(', '),
+                easyCustomersOther: formData.get('easy_customers_other'),
+                suggestions: formData.get('suggestions'),
+                additionalNotes: formData.get('additional_notes')
+            };
+            
+            // ส่งข้อมูลไป Google Apps Script
+            // URL ของ Google Apps Script ที่สร้างขึ้น
+            const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxZeKjfZvp5Q5dVrci_GNLEWdM0bgdD429UurelyFh3t8l8-mGa68HfTOSZu80Zv7rY/exec';
+            
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(() => {
+                // แสดงข้อความสำเร็จ
+                submitBtn.innerHTML = '✅ ส่งข้อมูลสำเร็จ!';
+                submitBtn.style.background = '#4CAF50';
+                
+                // รีเซ็ตฟอร์มหลังจาก 2 วินาที
+                setTimeout(() => {
+                    this.reset();
+                    document.getElementById('date').valueAsDate = new Date();
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.style.background = '';
+                    submitBtn.disabled = false;
+                    
+                    // แสดง alert
+                    alert('✅ ขอบคุณสำหรับข้อมูลที่มีค่า!\n\nข้อมูลได้ถูกบันทึกไว้เรียบร้อยแล้ว');
+                }, 2000);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                submitBtn.innerHTML = '❌ เกิดข้อผิดพลาด';
+                submitBtn.style.background = '#f44336';
+                
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.style.background = '';
+                    submitBtn.disabled = false;
+                }, 3000);
+                
+                alert('❌ เกิดข้อผิดพลาดในการส่งข้อมูล\nกรุณาลองอีกครั้ง');
+            });
+        });
+
+        // เปิด/ปิด input สำหรับ "อื่นๆ"
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const otherInput = this.closest('.category')?.querySelector('.other-input');
+                if (otherInput && this.value.includes('อื่นๆ')) {
+                    if (this.checked) {
+                        otherInput.style.display = 'block';
+                        otherInput.focus();
+                    } else {
+                        otherInput.style.display = 'none';
+                        otherInput.value = '';
+                    }
+                }
+            });
+        });
+    </script>
